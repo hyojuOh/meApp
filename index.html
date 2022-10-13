@@ -5,8 +5,168 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>오늘의 날씨</title>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <style>
+        *{
+            margin: 0; padding: 0;
+        }
+        body{
+            height: 100vh;
+            background: url("https://cdn.pixabay.com/photo/2018/08/14/13/23/ocean-3605547_960_720.jpg");
+            background-size: cover;
+            background-position: center center;
+        }
+
+        #back{
+            position: absolute;
+            top:0; left:0;
+            width:100%;
+            height:100vh;
+            background:rgba(0,0,0,.6);
+        }
+
+        .wBody{
+            width: 428px; height: 926px;
+            /* background: #faa; */
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .bg{
+            width: 290px; height: 360px;
+            background: rgba(0,0,0,.6);
+            border-radius: 10%;
+            margin: 0 auto;
+            position: relative;
+            top: 100px;
+            border: 1px solid #FFFFFF;
+        }
+
+        .name{
+            position: absolute;
+            width: 100%;
+            height: 23px;
+            top: 130px;
+            text-align: center;
+
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 20px;
+            line-height: 23px;
+
+            color: #FFFFFF;
+        }
+
+        .icon{
+            position: absolute;
+            width: 100%;
+            top: 140px;
+        }
+        .icon img{
+            width: 40%;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .main{
+            position: absolute;
+            width: 100%;
+            height: 23px;
+            text-align: center;
+            top: 300px;
+
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 20px;
+            line-height: 23px;
+
+            color: #FFFFFF;
+        }
+        .temp{
+            position: absolute;
+            width: 100%;
+            height: 40px;
+            top: 350px;
+            text-align: center;
+
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 34px;
+            line-height: 40px;
+            /* identical to box height */
+            color: #FFFFFF;
+        }
+
+        .text{
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            height: 70px;            
+            top: 732px;
+
+            font-family: 'Noto Sans KR';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 24px;
+            line-height: 35px;
+            text-align: center;
+
+            color: #FFFFFF;
+        }
+    </style>
 </head>
 <body>
-    오늘의 날씨는 맑아요~
+    <div id="back">
+        <div class="wBody">
+            
+            <div class="bg"></div>
+            <div class="weather">
+                <div class="name"></div>
+                <div class="icon"></div>
+                <div class="main"></div>
+                <div class="temp"></div>
+            </div>
+            <div class="text">
+                오늘은 날씨가 맑아요<br>
+                밖으로 나가요
+            </div>
+            <div class="time">
+        
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        // $.getJSON("경로",myApp);
+        $.getJSON(
+            "https://api.openweathermap.org/data/2.5/weather?lat=34.794&lon=126.389&appid=e507662572845227162c2d55ffbb691e&units=metric",
+            myApp
+        );
+            function myApp(data){
+                var todayweather = data.name + data.weather[0].main + 
+                " 온도 : " + data.main.temp + "℃" +
+                 
+                `<img src='http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png'>`;
+                var todaytime = new Date();
+
+                var print_time = todaytime.getDate()+"일 " + 
+                                todaytime.getHours()+"시 ";
+
+                // $(".weather").html(todayweather);
+                // $(".time").html(print_time);
+                $(".name").html(data.name); /* 도시이름 */
+                $(".icon").html(`<img src='http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png'>`);
+                $(".main").html(data.weather[0].main); //clear
+                $(".temp").html(data.main.temp + " ℃");
+            }
+        
+       
+    </script>
 </body>
 </html>
