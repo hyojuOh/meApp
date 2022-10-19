@@ -6,9 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>오늘의 날씨</title>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=d26b394c06bd9de52e5d1f0345f5f93b"></script>
     <style>
         *{
             margin: 0; padding: 0;
+        }
+        li{
+            list-style: none;
         }
         body{
             height: 100vh;
@@ -34,12 +38,12 @@
         }
 
         .bg{
-            width: 290px; height: 360px;
+            width: 350px; height: 400px;
             background: rgba(0,0,0,.6);
             border-radius: 10%;
             margin: 0 auto;
             position: relative;
-            top: 100px;
+            top: 40px;
             border: 1px solid #FFFFFF;
         }
 
@@ -47,7 +51,7 @@
             position: absolute;
             width: 100%;
             height: 23px;
-            top: 130px;
+            top: 70px;
             text-align: center;
 
             font-family: 'Roboto';
@@ -62,7 +66,7 @@
         .icon{
             position: absolute;
             width: 100%;
-            top: 140px;
+            top: 80px;
         }
         .icon img{
             width: 40%;
@@ -75,7 +79,7 @@
             width: 100%;
             height: 23px;
             text-align: center;
-            top: 300px;
+            top: 240px;
 
             font-family: 'Roboto';
             font-style: normal;
@@ -89,7 +93,7 @@
             position: absolute;
             width: 100%;
             height: 40px;
-            top: 350px;
+            top: 280px;
             text-align: center;
 
             font-family: 'Roboto';
@@ -117,6 +121,29 @@
 
             color: #FFFFFF;
         }
+
+        #map{
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translateX(-50%);
+            width: 380px; height: 380px;
+            border-radius: 20px;
+        }
+
+        .forecast{
+            display: flex;
+            width: 70%; margin: 0 auto;
+            position: absolute;
+            top: 35%; left: 15%;
+        }
+        .forecast li{color: #fff; text-align: center; font-size: .8rem;}
+
+        span:nth-child(1){
+            color: skyblue;
+        }
+        span:nth-child(2){
+            color: tomato;
+        }
     </style>
 </head>
 <body>
@@ -130,10 +157,36 @@
                 <div class="main"></div>
                 <div class="temp"></div>
             </div>
-            <div class="text">
+
+            <ul class="forecast">
+                <li>
+                    <div class="f_icon"></div>
+                    <div class="f_time"></div>
+                    <div class="f_temp"></div>    
+                </li>
+                <li>
+                    <div class="f_icon"></div>
+                    <div class="f_time"></div>
+                    <div class="f_temp"></div>    
+                </li>
+                <li>
+                    <div class="f_icon"></div>
+                    <div class="f_time"></div>
+                    <div class="f_temp"></div>    
+                </li>
+                <li>
+                    <div class="f_icon"></div>
+                    <div class="f_time"></div>
+                    <div class="f_temp"></div>    
+                </li>
+            </ul>
+            <div id="map">
+
+            </div>
+            <!-- <div class="text">
                 오늘은 날씨가 맑아요<br>
                 밖으로 나가요
-            </div>
+            </div> -->
             <div class="time">
         
             </div>
@@ -143,20 +196,52 @@
 
 
     <script>
-        // $.getJSON("경로",myApp);
+        // api.openweathermap.org/data/2.5/forecast/daily?lat={lat}&lon={lon}&cnt={cnt}&appid={API key}
+        // 4일예보
+        // "https://api.openweathermap.org/data/2.5/forecast?lat=34.794&lon=126.389&cnt=4&appid=e507662572845227162c2d55ffbb691e&units=metric"
+        $.getJSON("경로",myApp);
         $.getJSON(
             "https://api.openweathermap.org/data/2.5/weather?lat=34.794&lon=126.389&appid=e507662572845227162c2d55ffbb691e&units=metric",
             myApp
         );
+        $.getJSON(
+            "https://api.openweathermap.org/data/2.5/forecast?lat=34.794&lon=126.389&appid=e507662572845227162c2d55ffbb691e&units=metric",
+            forecast
+        );
+
+
+            function forecast(foreData){
+                
+                $(".forecast li:eq(0) .f_icon").html(`<img src='http://openweathermap.org/img/wn/${foreData.list[0].weather[0].icon}.png'>`);
+                $(".forecast li:eq(1) .f_icon").html(`<img src='http://openweathermap.org/img/wn/${foreData.list[8].weather[0].icon}.png'>`);
+                $(".forecast li:eq(2) .f_icon").html(`<img src='http://openweathermap.org/img/wn/${foreData.list[16].weather[0].icon}.png'>`);
+                $(".forecast li:eq(3) .f_icon").html(`<img src='http://openweathermap.org/img/wn/${foreData.list[24].weather[0].icon}.png'>`);
+
+                var foreTime1 = new Date(foreData.list[0].dt*1000);
+                var foreTime2 = new Date(foreData.list[8].dt*1000);
+                var foreTime3 = new Date(foreData.list[16].dt*1000);
+                var foreTime4 = new Date(foreData.list[24].dt*1000);
+                $(".forecast li:eq(0) .f_time").html(foreTime1.getDate()+"일 / "+foreTime1.getHours()+"시");
+                $(".forecast li:eq(1) .f_time").html(foreTime2.getDate()+"일 / "+foreTime2.getHours()+"시");
+                $(".forecast li:eq(2) .f_time").html(foreTime3.getDate()+"일 / "+foreTime3.getHours()+"시");
+                $(".forecast li:eq(3) .f_time").html(foreTime4.getDate()+"일 / "+foreTime4.getHours()+"시");
+
+                var foreTemp1 = new Date(foreData.list[0].main)
+                $(".forecast li:eq(0) .f_temp").html(`<span>${foreData.list[0].main.temp_min}℃</span> / <span>${foreData.list[0].main.temp_max}℃</span>`);
+                $(".forecast li:eq(1) .f_temp").html(`<span>${foreData.list[8].main.temp_min}℃</span> / <span>${foreData.list[0].main.temp_max}℃</span>`);
+                $(".forecast li:eq(2) .f_temp").html(`<span>${foreData.list[16].main.temp_min}℃</span> / <span>${foreData.list[0].main.temp_max}℃</span>`);
+                $(".forecast li:eq(3) .f_temp").html(`<span>${foreData.list[24].main.temp_min}℃</span> / <span>${foreData.list[0].main.temp_max}℃</span>`);
+            };
+
             function myApp(data){
-                var todayweather = data.name + data.weather[0].main + 
-                " 온도 : " + data.main.temp + "℃" +
+                var todayWeater = data.name + " " + data.weather[0].main + 
+                                " 온도 : " + data.main.temp + "℃" +
                  
                 `<img src='http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png'>`;
-                var todaytime = new Date();
+                var todaytime = new Date(data.dt*1000);
 
                 var print_time = todaytime.getDate()+"일 " + 
-                                todaytime.getHours()+"시 ";
+                                 todaytime.getHours()+"시 ";
 
                 // $(".weather").html(todayweather);
                 // $(".time").html(print_time);
@@ -166,6 +251,58 @@
                 $(".temp").html(data.main.temp + " ℃");
             }
         
+
+            // 카카오맵시작
+        var container = document.getElementById('map');
+        var text = document.querySelector('.text');
+
+        // 지도좌표입력1~10줌크기지정
+		var options = {
+			center: new kakao.maps.LatLng(34.794, 126.389),
+			level: 7
+		};
+
+		var map = new kakao.maps.Map(container, options);
+
+        
+        // 지도를 클릭한 위치에 표출할 마커넣기 시작 -----
+        
+        var marker = new kakao.maps.Marker({ 
+            // 지도 중심좌표에 마커를 생성합니다 
+            position: map.getCenter() 
+        }); 
+        
+        // 지도에 마커를 표시합니다
+        marker.setMap(map);
+
+        // 지도를 클릭한 위치에 표출할 마커넣기 끝 -----
+
+        // 지도에 클릭 이벤트를 등록합니다
+        // 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
+        kakao.maps.event.addListener(map, 'click', function(mouseEvent) {        
+            
+            // 클릭한 위도, 경도 정보를 가져옵니다 
+            var latlng = mouseEvent.latLng; 
+            
+            // 마커 위치를 클릭한 위치로 옮깁니다
+            marker.setPosition(latlng);
+            
+            text.innerHTML = "위도 : " + latlng.getLat() + "<br>경도 : " + latlng.getLng();
+            // 위도 : latlng.getLat()
+            // 경도 : latlng.getLng()
+            go(latlng.getLat(),latlng.getLng());
+        });
+
+        function go(Lat, Lng){
+            $.getJSON(
+                `https://api.openweathermap.org/data/2.5/weather?lat=${Lat}&lon=${Lng}&appid=e507662572845227162c2d55ffbb691e&units=metric`,
+                myApp
+            );
+            $.getJSON(
+            `https://api.openweathermap.org/data/2.5/forecast?lat=${Lat}&lon=${Lng}&appid=e507662572845227162c2d55ffbb691e&units=metric`,
+            forecast
+        );
+        }
        
     </script>
 </body>
