@@ -43,7 +43,7 @@
             border-radius: 10%;
             margin: 0 auto;
             position: relative;
-            top: 50px;
+            top: 16%;
             border: 1px solid #FFFFFF;
         }
 
@@ -51,7 +51,7 @@
             position: absolute;
             width: 100%;
             height: 23px;
-            top: 70px;
+            top: 20%;
             text-align: center;
 
             font-family: 'Roboto';
@@ -66,7 +66,7 @@
         .icon{
             position: absolute;
             width: 100%;
-            top: 80px;
+            top: 20%;
         }
         .icon img{
             width: 40%;
@@ -79,7 +79,7 @@
             width: 100%;
             height: 23px;
             text-align: center;
-            top: 240px;
+            top: 35%;
 
             font-family: 'Roboto';
             font-style: normal;
@@ -93,7 +93,7 @@
             position: absolute;
             width: 100%;
             height: 40px;
-            top: 280px;
+            top: 40%; left: -15%;
             text-align: center;
 
             font-family: 'Roboto';
@@ -134,7 +134,7 @@
             display: flex;
             width: 70%; margin: 0 auto;
             position: absolute;
-            top: 35%; left: 15%;
+            top: 45%; left: 15%;
         }
         .forecast li{color: #fff; text-align: center; font-size: .8rem;}
 
@@ -143,6 +143,19 @@
         }
         span:nth-child(2){
             color: tomato;
+        }
+
+        .pm2_510{
+            color: #fff;
+            text-align: center;
+        }
+
+        .mes{color: #fff; text-align: center;}
+
+        .fineDust{
+            position: absolute;
+            width: 110px; height: 50px;
+            top: 40%; right: 17%;
         }
     </style>
 </head>
@@ -180,6 +193,16 @@
                     <div class="f_temp"></div>    
                 </li>
             </ul>
+
+            <ul class="fineDust">
+                <li>
+                    <div class="mes">미세먼지</div>
+                    <div class="pm2_510"></div>
+                </li>
+                <!-- <li>
+                    <div class="pm2_510"></div>
+                </li> -->
+            </ul>
             <div id="map">
 
             </div>
@@ -199,6 +222,10 @@
         // api.openweathermap.org/data/2.5/forecast/daily?lat={lat}&lon={lon}&cnt={cnt}&appid={API key}
         // 4일예보
         // "https://api.openweathermap.org/data/2.5/forecast?lat=34.794&lon=126.389&cnt=4&appid=e507662572845227162c2d55ffbb691e&units=metric"
+
+        // 미세먼지
+        // "http://api.openweathermap.org/data/2.5/air_pollution?lat=34.794&lon=126.389&appid=e507662572845227162c2d55ffbb691e&units=metric"
+
         $.getJSON("경로",myApp);
         $.getJSON(
             "https://api.openweathermap.org/data/2.5/weather?lat=34.794&lon=126.389&appid=e507662572845227162c2d55ffbb691e&units=metric",
@@ -209,6 +236,14 @@
             forecast
         );
 
+        $.getJSON(
+            "https://api.openweathermap.org/data/2.5/air_pollution?lat=34.794&lon=126.389&appid=e507662572845227162c2d55ffbb691e&units=metric",
+            fineDust
+        );
+
+            function fineDust(fineDust){
+                $(".fineDust li:eq(0) .pm2_510").html(`${fineDust.list[0].components.pm2_5} / ${fineDust.list[0].components.pm10}`);
+            };
 
             function forecast(foreData){
                 
@@ -299,9 +334,13 @@
                 myApp
             );
             $.getJSON(
-            `https://api.openweathermap.org/data/2.5/forecast?lat=${Lat}&lon=${Lng}&appid=e507662572845227162c2d55ffbb691e&units=metric`,
-            forecast
-        );
+                `https://api.openweathermap.org/data/2.5/forecast?lat=${Lat}&lon=${Lng}&appid=e507662572845227162c2d55ffbb691e&units=metric`,
+                forecast
+            );
+            $.getJSON(
+                `https://api.openweathermap.org/data/2.5/air_pollution?lat=${Lat}&lon=${Lng}&appid=e507662572845227162c2d55ffbb691e&units=metric`,
+                fineDust
+            );
         }
        
     </script>
